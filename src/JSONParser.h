@@ -14,7 +14,6 @@
 
 namespace json_parser {
 
-// TODO complete it
 /**
  * NOTICE we parse the json string and ensure the validity first. filename done later
  */
@@ -32,10 +31,12 @@ private:
     bool parse_file();
     bool parse_string();
     bool lexical_analyze();
-    bool search_string(std::string &str, size_t &start_index);
-    bool search_null(size_t &start_index);
-    bool search_true(size_t &start_index);
-    bool search_false(size_t &start_index);
+
+    /** search unsuccessfully if it returns false. And it implies an invalid JSON */
+    bool search_string(std::string &str, size_t &index);
+    bool search_null(size_t &index);
+    bool search_bool(size_t &index, bool &val);
+    bool search_num(size_t &index, long &val);
 
     // store the parse target. json string or filename. It depends on str_or_file
     std::string parse_target;
