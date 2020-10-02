@@ -3,6 +3,6 @@
 
 namespace json_parser {
 
-}
+} // namespace json_parser
 
 #endif

@@ -49,6 +49,6 @@ class EpsToken : public TokenAbstract {
 
 };
 
-}
+} // namespace json_parser
 
 #endif

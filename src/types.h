@@ -4,7 +4,7 @@
 namespace json_parser {
 
 // Token == terminal
-enum class Token {
+enum class Token_t {
     STRING,
     NUMBER,
     BOOL,
@@ -20,7 +20,7 @@ enum class Token {
 };
 
 // non-terminal
-enum class NonTml {
+enum class NonTml_t {
     START,
     OBJECT,
     OBJECT_,
@@ -41,6 +41,6 @@ enum class NonTml {
     END // $
 };
 
-}
+} // namespace json_parser
 
 #endif

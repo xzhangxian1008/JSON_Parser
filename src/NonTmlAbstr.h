@@ -15,6 +15,6 @@ public:
 private:
 };
 
-}
+} // namespace json_parser
 
 #endif
