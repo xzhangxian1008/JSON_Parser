@@ -7,7 +7,7 @@ namespace json_parser {
 
 class StringToken : public TokenAbstract {
 public:
-    StringToken(const std::string &str, Token_t tk) : TokenAbstract(str, tk) {}
+    StringToken(const std::string &str) : TokenAbstract(str, Token_t::STRING) {}
 
     const bool get_token_data(TkData &data_) const override {
         data_.str = data.str;
@@ -32,7 +32,7 @@ public:
 
 class NumberToken : public TokenAbstract {
 public:
-    NumberToken(const long num, Token_t tk) : TokenAbstract(num, tk) {}
+    NumberToken(const long num) : TokenAbstract(num, Token_t::NUMBER) {}
 
     const bool get_token_data(TkData &data_) const override {
         data_.num = data.num;
@@ -57,7 +57,7 @@ public:
 
 class BoolToken : public TokenAbstract {
 public:
-    BoolToken(const bool b, Token_t tk) : TokenAbstract(b, tk) {}
+    BoolToken(const bool b) : TokenAbstract(b, Token_t::BOOL) {}
 
     const bool get_token_data(TkData &data_) const override {
         data_.b = data.b;
@@ -82,7 +82,7 @@ public:
 
 class NullToken : public TokenAbstract {
 public:
-    NullToken(Token_t tk) : TokenAbstract(tk) {}
+    NullToken() : TokenAbstract(Token_t::NULL_) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -98,7 +98,7 @@ public:
 
 class LeftBraceToken : public TokenAbstract {
 public:
-    LeftBraceToken(Token_t tk) : TokenAbstract(tk) {}
+    LeftBraceToken() : TokenAbstract(Token_t::LEFT_BRACE) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -114,7 +114,7 @@ public:
 
 class RightBraceToken : public TokenAbstract {
 public:
-    RightBraceToken(Token_t tk) : TokenAbstract(tk) {}
+    RightBraceToken() : TokenAbstract(Token_t::RIGHT_BRACE) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -128,9 +128,9 @@ public:
     }
 };
 
-class LeftSQToken : public TokenAbstract {
+class LeftSBToken : public TokenAbstract {
 public:
-    LeftSQToken(Token_t tk) : TokenAbstract(tk) {}
+    LeftSBToken() : TokenAbstract(Token_t::LEFT_SB) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -144,9 +144,9 @@ public:
     }
 };
 
-class RightSQToken : public TokenAbstract {
+class RightSBToken : public TokenAbstract {
 public:
-    RightSQToken(Token_t tk) : TokenAbstract(tk) {}
+    RightSBToken() : TokenAbstract(Token_t::RIGHT_SB) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -162,7 +162,7 @@ public:
 
 class CommaToken : public TokenAbstract {
 public:
-    CommaToken(Token_t tk) : TokenAbstract(tk) {}
+    CommaToken() : TokenAbstract(Token_t::COMMA) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -178,7 +178,7 @@ public:
 
 class ColonToken : public TokenAbstract {
 public:
-    ColonToken(Token_t tk) : TokenAbstract(tk) {}
+    ColonToken() : TokenAbstract(Token_t::COLON) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
@@ -194,7 +194,23 @@ public:
 
 class EpsToken : public TokenAbstract {
 public:
-    EpsToken(Token_t tk) : TokenAbstract(tk) {}
+    EpsToken() : TokenAbstract(Token_t::EPS) {}
+
+    const bool get_token_data(TkData &data_) const override {
+        return false;
+    }
+
+    const bool operator==(const TokenAbstract &ta) const override {
+        if (token_t != ta.get_token_type()) {
+            return false;
+        }
+        return true;
+    }
+};
+
+class EndToken : public TokenAbstract {
+public:
+    EndToken() : TokenAbstract(Token_t::END) {}
 
     const bool get_token_data(TkData &data_) const override {
         return false;
