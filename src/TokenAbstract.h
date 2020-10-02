@@ -19,19 +19,14 @@ public:
 
     virtual ~TokenAbstract() = default;
 
-    virtual const Token_t get_token_type() = 0;
-private:
-    union TkData {
-        std::string str;
-        long num;
-        bool b;
-        TkData() {}
-        TkData(const std::string &s) : str(s) {}
-        TkData(const long num_) : num(num_) {}
-        TkData(const bool b_) : b(b_)  {}
-        ~TkData() {}
-    };
-    
+    const Token_t get_token_type() const { return token_t; }
+
+    // some tokens only have type, return false if it does not own a value
+    virtual const bool get_token_data(TkData &data_) const = 0;
+
+    virtual const bool operator==(const TokenAbstract &ta) const = 0;
+
+protected:
     TkData data;
 
     Token_t token_t;
