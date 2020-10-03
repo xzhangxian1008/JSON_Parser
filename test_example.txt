@@ -1,2 +1,29 @@
-{\"name\" : \"xzx\",\"age\" : 23,\"cool\" : true,\"bad\" : null,\"sss\" : -123, \"aaa\":\"bbb\"}
+valid lexical:
+{
+    "name" : "xzx",
+    "bool" : true,
+    "null" : null,
+    "num" : 123,
+    "obj" : {
+        "bool" : false,
+        "num" : -123
+    },
+    "list" : [
+        true, null, 1, "str", 
+        { 
+            "book" : "cpp" 
+        } ]
+}
 
+{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : 
+{\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", 
+{ \"book\" : \"cpp\" }]}
+
+invalid lexical:
+{asd : asd}
+{\"asd\" : 123b1}
+{\"a\" : nul}
+{\"a : 1}
+{\"a\" : tru}
+{\"a\" : fa}
+{\"a\" ' : \"c\"}

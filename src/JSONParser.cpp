@@ -47,7 +47,7 @@ bool JSONParser::lexical_analyze() {
             case '"':
                 /** string */
                 if (!search_string(str, ++index)) {
-                    std::cout << "INVALID JSON" << std::endl;
+                    // std::cout << "INVALID JSON" << std::endl;
                     return false;
                 }
                 token_deque.emplace_back(std::unique_ptr<TokenAbstract>(new StringToken(str)));
@@ -55,7 +55,7 @@ bool JSONParser::lexical_analyze() {
             case 'n':
                 /** null */
                 if (!search_null(index)) {
-                    std::cout << "INVALID JSON" << std::endl;
+                    // std::cout << "INVALID JSON" << std::endl;
                     return false;
                 }
                 token_deque.emplace_back(std::unique_ptr<TokenAbstract>(new NullToken()));
@@ -68,7 +68,7 @@ bool JSONParser::lexical_analyze() {
         if (c >= '0' && c <= '9' || c == '-') {
             long val = 0;
             if (!search_num(index, val)) {
-                std::cout << "INVALID JSON" << std::endl;
+                // std::cout << "INVALID JSON" << std::endl;
                 return false;
             }
             token_deque.emplace_back(std::unique_ptr<TokenAbstract>(new NumberToken(val)));
@@ -79,11 +79,20 @@ bool JSONParser::lexical_analyze() {
         if (c == 't' || c == 'f') {
             bool val;
             if (!search_bool(index, val)) {
-                std::cout << "INVALID JSON" << std::endl;
+                // std::cout << "INVALID JSON" << std::endl;
                 return false;
             }
             token_deque.emplace_back(std::unique_ptr<TokenAbstract>(new BoolToken(val)));
+            continue;
         }
+
+        // ignore the blank, carriage return and line feed
+        if (c == 10 || c == 13 || c == 32) {
+            continue;
+        }
+
+        // std::cout << "INVALID JSON" << std::endl;
+        return false;
     }
 
     // put the end notation
