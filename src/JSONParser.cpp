@@ -182,6 +182,9 @@ bool JSONParser::search_num(size_t &index, long &val) {
         c = parse_target[index];
     }
 
+    // relocate to the end of the number
+    index--;
+
     return true;
 }
 

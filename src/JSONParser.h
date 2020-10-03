@@ -22,10 +22,16 @@ public:
     JSONParser(const std::string &parse_target_, bool str_or_file_) 
         : parse_target(parse_target_), str_or_file(str_or_file_), pt_length(parse_target.size()) {}
     
-    // true: success  false: fail
+    // parse result: 
+    //   true: success
+    //   false: fail
     bool parse();
 
     JSONParser(const JSONParser &j) = delete;
+
+protected:
+    // NOTICE function only for test
+    std::deque<std::unique_ptr<TokenAbstract>>& get_token_deque() { return token_deque; }
 
 private:
     bool parse_file();
