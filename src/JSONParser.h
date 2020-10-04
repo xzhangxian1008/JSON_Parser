@@ -20,8 +20,7 @@ namespace json_parser {
  */
 class JSONParser {
 public:
-    JSONParser(const std::string &parse_target_, bool str_or_file_) 
-        : parse_target(parse_target_), str_or_file(str_or_file_), pt_length(parse_target.size()) {}
+    JSONParser(const std::string &parse_target_, bool str_or_file_);
     
     // parse result: 
     //   true: success
@@ -38,6 +37,7 @@ private:
     bool parse_file();
     bool parse_string();
     bool lexical_analyze();
+    bool semantic_analysis();
 
     /** search unsuccessfully if it returns false. And it implies an invalid JSON */
     bool search_string(std::string &str, size_t &index);
@@ -61,7 +61,21 @@ private:
     std::deque<std::unique_ptr<TokenAbstract>> token_deque;
 
     // store non-terminal
-    std::stack<NonTmlAbstr *> non_tml_stack;
+    std::stack<std::unique_ptr<NonTmlAbstr>> non_tml_stack;
+
+    /**
+     * object_locate_stack:
+     *   store index where we should pop the object_stack
+     * 
+     * array_locate_stack:
+     *   store index where we should pop the array_stack
+     */
+    std::stack<OBJECTNonTml*> object_stk;
+    std::stack<std::size_t> object_lct_stk;
+    std::stack<ARRAYNonTml*> array_stk;
+    std::stack<std::size_t> array_lct_stk;
+
+    
 };
 
 } // namespace json_parser

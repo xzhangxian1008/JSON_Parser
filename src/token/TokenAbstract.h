@@ -7,6 +7,17 @@
 
 namespace json_parser {
 
+union TkData {
+    std::string str;
+    long num;
+    bool b;
+    TkData() {}
+    TkData(const std::string &s) : str(s) {}
+    TkData(const long num_) : num(num_) {}
+    TkData(const bool b_) : b(b_)  {}
+    ~TkData() {}
+};
+
 class TokenAbstract {
 public:
     TokenAbstract(const std::string &str, Token_t tk) : data(str), token_t(tk) {}

@@ -1,12 +1,37 @@
 #include "JSONParser.h"
+#include "src/non_tml/NonTml.h"
 
 namespace json_parser {
 
+JSONParser::JSONParser(const std::string &parse_target_, bool str_or_file_) 
+    : parse_target(parse_target_), str_or_file(str_or_file_), pt_length(parse_target.size()) {
+    non_tml_stack.push(std::unique_ptr<EndNonTml>());
+}
+
 bool JSONParser::parse() {
     if (str_or_file) {
-        return parse_string();
+        if (!parse_string() || !semantic_analysis()) {
+            return false;
+        }
+
+        return true;
     }
-    return parse_file();
+
+    if (!parse_file() || !semantic_analysis()) {
+        return false;
+    }
+    return true;
+}
+
+bool JSONParser::semantic_analysis() {
+    while (non_tml_stack.size()) {
+        NonTml_t nt = non_tml_stack.top()->get_non_tml_type();
+        if (nt == NonTml_t::Token) {
+            // TODO compare Token_t
+        }
+
+        
+    }
 }
 
 bool JSONParser::parse_string() {

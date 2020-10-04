@@ -82,33 +82,48 @@ TEST(LexicalAnalyzer, valid) {
 }
 
 TEST(LexicalAnalyzer, invalid) {
-    std::string json1("{asd : asd}");
-    JSONParserTest jpt1(json1, true);
-    EXPECT_EQ(false, jpt1.parse());
+    {
+        std::string json1("{asd : asd}");
+        JSONParserTest jpt1(json1, true);
+        EXPECT_EQ(false, jpt1.parse());
+    }
+    
+    {
+        std::string json2("{\"asd\" : 123b1}");
+        JSONParserTest jpt2(json2, true);
+        EXPECT_EQ(false, jpt2.parse());
+    }
 
-    std::string json2("{\"asd\" : 123b1}");
-    JSONParserTest jpt2(json2, true);
-    EXPECT_EQ(false, jpt2.parse());
+    {    
+        std::string json3("{\"a\" : nul}");
+        JSONParserTest jpt3(json3, true);
+        EXPECT_EQ(false, jpt3.parse());
+    }
 
-    std::string json3("{\"a\" : nul}");
-    JSONParserTest jpt3(json3, true);
-    EXPECT_EQ(false, jpt3.parse());
+    {
+        std::string json4("{\"a : 1}");
+        JSONParserTest jpt4(json4, true);
+        EXPECT_EQ(false, jpt4.parse());
+    }
 
-    std::string json4("{\"a : 1}");
-    JSONParserTest jpt4(json4, true);
-    EXPECT_EQ(false, jpt4.parse());
+    {
+        std::string json5("{\"a\" : tru}");
+        JSONParserTest jpt5(json5, true);
+        EXPECT_EQ(false, jpt5.parse());
+    }
 
-    std::string json5("{\"a\" : tru}");
-    JSONParserTest jpt5(json5, true);
-    EXPECT_EQ(false, jpt5.parse());
+    {
+        std::string json6("{\"a\" : fa}");
+        JSONParserTest jpt6(json6, true);
+        EXPECT_EQ(false, jpt6.parse());
+    }
 
-    std::string json6("{\"a\" : fa}");
-    JSONParserTest jpt6(json6, true);
-    EXPECT_EQ(false, jpt6.parse());
+    {
+        std::string json7("{\"a\" ' : \"c\"}");
+        JSONParserTest jpt7(json7, true);
+        EXPECT_EQ(false, jpt7.parse());
+    }
 
-    std::string json7("{\"a\" ' : \"c\"}");
-    JSONParserTest jpt7(json7, true);
-    EXPECT_EQ(false, jpt7.parse());
 }
 
 } // json_parser

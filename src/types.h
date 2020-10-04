@@ -1,36 +1,7 @@
 #ifndef TYPES
 #define TYPES
 
-#include "src/non_tml/NonTml.h"
-
 namespace json_parser {
-
-union TkData {
-    std::string str;
-    long num;
-    bool b;
-    TkData() {}
-    TkData(const std::string &s) : str(s) {}
-    TkData(const long num_) : num(num_) {}
-    TkData(const bool b_) : b(b_)  {}
-    ~TkData() {}
-};
-
-union Values {
-    std::string str;
-    long num;
-    bool b;
-    OBJECTNonTml *object;
-    ARRAYNonTml *array;
-    Values() { object = nullptr; array = nullptr; }
-    Values(const std::string &s) : str(s) { object = nullptr; array = nullptr; }
-    Values(const long num_) : num(num_) { object = nullptr; array = nullptr; }
-    Values(const bool b_) : b(b_)  { object = nullptr; array = nullptr; }
-    ~Values() {
-        if (object != nullptr) delete object;
-        if (array != nullptr) delete array;
-    }
-};
 
 // Token == terminal
 enum class Token_t {
