@@ -1,7 +1,7 @@
 #ifndef TOKEN
 #define TOKEN
 
-#include "TokenAbstract.h"
+#include "src/token/TokenAbstract.h"
 
 namespace json_parser {
 

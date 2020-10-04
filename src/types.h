@@ -1,6 +1,8 @@
 #ifndef TYPES
 #define TYPES
 
+#include "src/non_tml/NonTml.h"
+
 namespace json_parser {
 
 union TkData {
@@ -12,6 +14,22 @@ union TkData {
     TkData(const long num_) : num(num_) {}
     TkData(const bool b_) : b(b_)  {}
     ~TkData() {}
+};
+
+union Values {
+    std::string str;
+    long num;
+    bool b;
+    OBJECTNonTml *object;
+    ARRAYNonTml *array;
+    Values() { object = nullptr; array = nullptr; }
+    Values(const std::string &s) : str(s) { object = nullptr; array = nullptr; }
+    Values(const long num_) : num(num_) { object = nullptr; array = nullptr; }
+    Values(const bool b_) : b(b_)  { object = nullptr; array = nullptr; }
+    ~Values() {
+        if (object != nullptr) delete object;
+        if (array != nullptr) delete array;
+    }
 };
 
 // Token == terminal
@@ -49,7 +67,17 @@ enum class NonTml_t {
     R_SB, // 14
     L_BR, // 15
     R_BR, // 16
-    END // $ 17
+    END, // $ 17
+    Token
+};
+
+enum class Value_t {
+    STRING,
+    NUMBER,
+    BOOL,
+    NULL_,
+    OBJECT,
+    ARRAY
 };
 
 inline std::string tktype_2_str(Token_t tk) {
@@ -121,6 +149,25 @@ inline std::string nontml_2_str(NonTml_t nt) {
             return "R_BR";
         case NonTml_t::END:
             return "END";
+    }
+
+    return "INVALID";
+}
+
+inline std::string value_2_str(Value_t vt) {
+    switch (vt) {
+        case Value_t::STRING:
+            return "STRING";
+        case Value_t::NUMBER:
+            return "NUMBER";
+        case Value_t::BOOL:
+            return "BOOL";
+        case Value_t::NULL_:
+            return "NULL_";
+        case Value_t::OBJECT:
+            return "OBJECT";
+        case Value_t::ARRAY:
+            return "ARRAY";
     }
 
     return "INVALID";

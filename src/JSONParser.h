@@ -8,9 +8,10 @@
 #include <memory>
 #include <iostream>
 
-#include "TokenAbstract.h"
-#include "NonTmlAbstr.h"
-#include "Token.h"
+#include "src/token/Token.h"
+#include "src/token/TokenAbstract.h"
+#include "src/non_tml/NonTmlAbstr.h"
+#include "src/value/Value.h"
 
 namespace json_parser {
 
