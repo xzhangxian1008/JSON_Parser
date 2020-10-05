@@ -20,9 +20,7 @@ union Values {
     Values(const bool b_) : b(b_)  { object = nullptr; array = nullptr; }
     Values(OBJECTNonTml *const object_) : object(object_) { array = nullptr; }
     Values(ARRAYNonTml *const array_) : array(array_) { object = nullptr; }
-    ~Values() {
-        // WARNING delete!!!
-    }
+    ~Values() {}
 };
 
 class ValueAbstract {

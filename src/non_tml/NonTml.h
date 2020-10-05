@@ -20,6 +20,15 @@ public:
         pairs.emplace(key, std::unique_ptr<ValueAbstract>(value));
     }
 
+    const ValueAbstract* get(const std::string key) const {
+        auto iter = pairs.find(key);
+        if (iter == pairs.end()) {
+            return nullptr;
+        }
+
+        return iter->second.get();
+    }
+
 private:
     std::map<std::string, std::unique_ptr<ValueAbstract>> pairs;
 };

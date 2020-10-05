@@ -8,7 +8,7 @@ INCLUDE_PATH = -I /home/xzx/codes/JSON_Parser
 
 # need automatical dependency generation
 
-la_test: $(ALL_HEADERS) JSONParser.o lexical_analyzer_test.o ValueAbstract.o
+la_test: $(ALL_HEADERS) JSONParser.o lexical_analyzer_test.o
 	$(CC) JSONParser.o lexical_analyzer_test.o $(LINK_LIB) -o la_test
 
 JSONParser.o: $(ALL_HEADERS) src/JSONParser.cpp
