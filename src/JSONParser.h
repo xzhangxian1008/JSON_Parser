@@ -107,9 +107,9 @@ private:
      *   store index where we should pop the array_stack
      */
     std::stack<OBJECTNonTml*> object_stk;
-    std::stack<std::size_t> object_lct_stk;
+    // std::stack<std::size_t> object_lct_stk;
     std::stack<ARRAYNonTml*> array_stk;
-    std::stack<std::size_t> array_lct_stk;
+    // std::stack<std::size_t> array_lct_stk;
 
     /**
      * object or array? ValueAbstract should be added to which data structure?

@@ -26,12 +26,13 @@ bool JSONParser::semantic_analysis() {
                 exit(-1);
             }
             
+            // compare
             if (tnt->get_token_t() != token_deque.front()->get_token_type()) {
                 return false;
             }
 
-            // TODO put token data
-
+            token_deque.pop_front();
+            non_tml_stack.pop();
             continue;
         }
 
@@ -112,8 +113,8 @@ bool JSONParser::do_OBJECT_() {
         case Token_t::STRING:
             non_tml_stack.pop();
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new R_BRNonTml));
-            object_stk.push(new OBJECTNonTml);
-            object_lct_stk.push(non_tml_stack.size());
+            if (object_stk.size() == 0) { object_stk.push(new OBJECTNonTml); }
+            // object_lct_stk.push(non_tml_stack.size());
             sel_stk.push(true);
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new MEMBERSNonTml));
             return true;
@@ -189,6 +190,8 @@ bool JSONParser::do_ARRAY_() {
         tk == Token_t::NULL_ || tk == Token_t::LEFT_SB || tk == Token_t::LEFT_BRACE) {
         non_tml_stack.pop();
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new R_SBNonTml));
+        // array_lct_stk.push(array_stk.size());
+        sel_stk.push(false);
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ELEMENTSNonTml));
         return true;
     } else if (tk == Token_t::RIGHT_SB) {
@@ -229,8 +232,60 @@ bool JSONParser::do_ELEMENTS_() {
 }
 
 bool JSONParser::do_VALUE() {
-    Token_t tk = token_deque.front()->get_token_type();
-    // TODO important!
+    bool sel = sel_stk.top();
+    OBJECTNonTml *object = object_stk.top();
+    ARRAYNonTml *array = array_stk.top();
+    TokenAbstract *tka = token_deque.front().get();
+    Token_t tk = tka->get_token_type();
+    TkData data;
+
+    // pop VALUE non-terminal
+    non_tml_stack.pop();
+    
+    switch (tk) {
+        case Token_t::STRING:
+            if (!tka->get_token_data(data)) { return false; }
+            if (sel) { object->put(tmp_str, new StringValue(data.str)); } 
+            else { array->push(new StringValue(data.str)); }
+        case Token_t::NUMBER:
+            if (!tka->get_token_data(data)) { return false; }
+            if (sel) { object->put(tmp_str, new NumberValue(data.num)); } 
+            else { array->push(new NumberValue(data.num)); }
+        case Token_t::BOOL:
+            if (!tka->get_token_data(data)) { return false; }
+            if (sel) { object->put(tmp_str, new BoolValue(data.b)); } 
+            else { array->push(new BoolValue(data.b)); }
+        case Token_t::NULL_:
+            if (sel) { object->put(tmp_str, new NullValue()); }
+            else { array->push(new NullValue()); }
+        case Token_t::LEFT_BRACE:
+            if (sel) {
+                OBJECTNonTml *obj = new OBJECTNonTml();
+                object_stk.push(obj);
+                object->put(tmp_str, new ObjectValue(obj));
+            } else {
+                ARRAYNonTml *ary = new ARRAYNonTml();
+                array_stk.push(ary);
+                array->push(new ArrayValue(ary));
+            }
+            non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new OBJECTNonTml));
+        case Token_t::LEFT_SB:
+            if (sel) {
+                OBJECTNonTml *obj = new OBJECTNonTml();
+                object_stk.push(obj);
+                object->put(tmp_str, new ObjectValue(obj));
+            } else {
+                ARRAYNonTml *ary = new ARRAYNonTml();
+                array_stk.push(ary);
+                array->push(new ArrayValue(ary));
+            }
+            non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ARRAYNonTml));
+        default:
+            return false;
+    }
+
+    token_deque.pop_front();
+    return true;
 }
 
 bool JSONParser::do_COMMA() {
@@ -272,6 +327,16 @@ bool JSONParser::do_R_SB() {
         return false;
     }
 
+    // NOTICE *for debug*
+    if (sel_stk.top() != false) {
+        std::cout << "INVALID IN do_R_SB" << std::endl;
+        exit(-1);
+    }
+
+    sel_stk.pop();
+    ap_dq.push_back(array_stk.top());
+    array_stk.pop();
+
     non_tml_stack.pop();
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new TokenNonTml(Token_t::RIGHT_SB)));
     return true;
@@ -293,6 +358,17 @@ bool JSONParser::do_R_BR() {
     if (tk != Token_t::RIGHT_BRACE) {
         return false;
     }
+
+    // NOTICE *for debug*
+    if (sel_stk.top() != true) {
+        std::cout << "INVALID IN do_R_BR" << std::endl;
+        exit(-1);
+    }
+
+    sel_stk.pop();
+    root_obj = object_stk.top();
+    object_stk.pop();
+    op_dq.push_back(root_obj);
 
     non_tml_stack.pop();
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new TokenNonTml(Token_t::RIGHT_BRACE)));

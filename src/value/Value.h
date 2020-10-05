@@ -7,7 +7,7 @@ namespace json_parser {
 
 class StringValue : public ValueAbstract {
 public:
-    StringValue(const std::string &str, const Value_t vt) : ValueAbstract(str, vt) {}
+    StringValue(const std::string &str) : ValueAbstract(str) {}
 
     std::string get_value() const {
         return get_value_().str;
@@ -16,7 +16,7 @@ public:
 
 class NumberValue : public ValueAbstract {
 public:
-    NumberValue(const long num, const Value_t vt) : ValueAbstract(num, vt) {}
+    NumberValue(const long num) : ValueAbstract(num) {}
 
     long get_value() const {
         return get_value_().num;
@@ -25,7 +25,7 @@ public:
 
 class BoolValue : public ValueAbstract {
 public:
-    BoolValue(const bool b, const Value_t vt) : ValueAbstract(b, vt) {}
+    BoolValue(const bool b) : ValueAbstract(b) {}
 
     bool get_value() const {
         return get_value_().b;
@@ -34,12 +34,12 @@ public:
 
 class NullValue : public ValueAbstract {
 public:
-    NullValue(const Value_t vt) : ValueAbstract(vt) {}
+    NullValue() : ValueAbstract() {}
 };
 
 class ObjectValue : public ValueAbstract {
 public:
-    ObjectValue(OBJECTNonTml *const object, const Value_t vt) : ValueAbstract(object, vt) {}
+    ObjectValue(OBJECTNonTml *const object) : ValueAbstract(object) {}
 
     const OBJECTNonTml* get_value() const {
         return get_value_().object;
@@ -48,7 +48,7 @@ public:
 
 class ArrayValue : public ValueAbstract {
 public:
-    ArrayValue(ARRAYNonTml *const array, const Value_t vt) : ValueAbstract(array, vt) {}
+    ArrayValue(ARRAYNonTml *const array) : ValueAbstract(array) {}
 
     const ARRAYNonTml* get_value() const {
         return get_value_().array;

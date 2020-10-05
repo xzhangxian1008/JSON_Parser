@@ -11,13 +11,19 @@ INCLUDE_PATH = -I /home/xzx/codes/JSON_Parser
 la_test: $(ALL_HEADERS) JSONParser.o lexical_analyzer_test.o
 	$(CC) JSONParser.o lexical_analyzer_test.o $(LINK_LIB) -o la_test
 
+json_test: $(ALL_HEADERS) JSONParser.o json_parser_test.o
+	$(CC) JSONParser.o json_parser_test.o $(LINK_LIB) -o json_test
+
 JSONParser.o: $(ALL_HEADERS) src/JSONParser.cpp
 	$(CC) src/JSONParser.cpp $(FLAGS) $(INCLUDE_PATH)
 
 lexical_analyzer_test.o: $(ALL_HEADERS)  test/lexical_analyzer_test.cpp
 	$(CC) test/lexical_analyzer_test.cpp $(FLAGS) $(INCLUDE_PATH)
 
+json_parser_test.o: $(ALL_HEADERS)  test/json_parser_test.cpp
+	$(CC) test/json_parser_test.cpp $(FLAGS) $(INCLUDE_PATH)
+
 .PHONY:clean
 clean:
-	-rm $(TARGET) JSONParser.o lexical_analyzer_test.o
+	-rm $(TARGET) JSONParser.o lexical_analyzer_test.o json_parser_test.o
 

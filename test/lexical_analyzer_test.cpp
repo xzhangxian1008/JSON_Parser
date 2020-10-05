@@ -8,9 +8,9 @@ inline void print(const T &t) {
     std::cout << t << std::endl;
 }
 
-class JSONParserTest : public JSONParser {
+class LexicalAnalyzerTest : public JSONParser {
 public:
-    JSONParserTest(const std::string &parse_target_, bool str_or_file_) 
+    LexicalAnalyzerTest(const std::string &parse_target_, bool str_or_file_) 
         : JSONParser(parse_target_, str_or_file_), token_deque(get_token_deque()) {}
     
     std::deque<std::unique_ptr<TokenAbstract>>& get_token_dq() { return token_deque; }
@@ -20,7 +20,7 @@ private:
 
 TEST(LexicalAnalyzer, valid) {
     std::string json1("{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : {\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", { \"book\" : \"cpp\" }]}");
-    JSONParserTest jpt1(json1, true);
+    LexicalAnalyzerTest jpt1(json1, true);
     ASSERT_EQ(true, jpt1.parse());
     std::deque<std::unique_ptr<TokenAbstract>> &token_deque = jpt1.get_token_dq();
 
@@ -84,43 +84,43 @@ TEST(LexicalAnalyzer, valid) {
 TEST(LexicalAnalyzer, invalid) {
     {
         std::string json1("{asd : asd}");
-        JSONParserTest jpt1(json1, true);
+        LexicalAnalyzerTest jpt1(json1, true);
         EXPECT_EQ(false, jpt1.parse());
     }
     
     {
         std::string json2("{\"asd\" : 123b1}");
-        JSONParserTest jpt2(json2, true);
+        LexicalAnalyzerTest jpt2(json2, true);
         EXPECT_EQ(false, jpt2.parse());
     }
 
     {    
         std::string json3("{\"a\" : nul}");
-        JSONParserTest jpt3(json3, true);
+        LexicalAnalyzerTest jpt3(json3, true);
         EXPECT_EQ(false, jpt3.parse());
     }
 
     {
         std::string json4("{\"a : 1}");
-        JSONParserTest jpt4(json4, true);
+        LexicalAnalyzerTest jpt4(json4, true);
         EXPECT_EQ(false, jpt4.parse());
     }
 
     {
         std::string json5("{\"a\" : tru}");
-        JSONParserTest jpt5(json5, true);
+        LexicalAnalyzerTest jpt5(json5, true);
         EXPECT_EQ(false, jpt5.parse());
     }
 
     {
         std::string json6("{\"a\" : fa}");
-        JSONParserTest jpt6(json6, true);
+        LexicalAnalyzerTest jpt6(json6, true);
         EXPECT_EQ(false, jpt6.parse());
     }
 
     {
         std::string json7("{\"a\" ' : \"c\"}");
-        JSONParserTest jpt7(json7, true);
+        LexicalAnalyzerTest jpt7(json7, true);
         EXPECT_EQ(false, jpt7.parse());
     }
 

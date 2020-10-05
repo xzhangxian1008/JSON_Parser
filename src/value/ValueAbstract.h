@@ -25,19 +25,19 @@ union Values {
 
 class ValueAbstract {
 public:
-    ValueAbstract(const std::string &str, const Value_t vt_) : value(str), vt(vt_) {}
+    ValueAbstract(const std::string &str) : value(str), vt(Value_t::STRING) {}
 
-    ValueAbstract(const long num_, const Value_t vt_) : value(num_), vt(vt_) {}
+    ValueAbstract(const long num_) : value(num_), vt(Value_t::NUMBER) {}
 
-    ValueAbstract(const bool b_, const Value_t vt_) : value(b_), vt(vt_) {}
+    ValueAbstract(const bool b_) : value(b_), vt(Value_t::BOOL) {}
 
-    ValueAbstract(OBJECTNonTml *const object, const Value_t vt_) : value(object), vt(vt_) {}
+    ValueAbstract(OBJECTNonTml *const object) : value(object), vt(Value_t::OBJECT) {}
 
-    ValueAbstract(ARRAYNonTml *const array, const Value_t vt_) : value(array), vt(vt_) {}
+    ValueAbstract(ARRAYNonTml *const array) : value(array), vt(Value_t::ARRAY) {}
 
-    ValueAbstract(const Value_t vt_) : value(), vt(vt_) {}
+    ValueAbstract() : value(), vt(Value_t::NULL_) {}
     
-    virtual ~ValueAbstract();
+    virtual ~ValueAbstract() {}
 
     const Value_t get_value_t() const { return vt; }
 protected:
