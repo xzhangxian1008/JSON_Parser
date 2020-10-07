@@ -44,13 +44,18 @@ public:
         }
     }
 
+    const ValueAbstract* get(const std::string &key) const {
+        return root_obj->get(key);
+    }
+
 protected:
     // NOTICE function only for test
     std::deque<std::unique_ptr<TokenAbstract>>& get_token_deque() { return token_deque; }
+    bool get_str_or_file() { return str_or_file; }
 
-private:
     bool parse_file();
     bool parse_string();
+private:
     bool lexical_analyze();
     bool semantic_analysis();
 

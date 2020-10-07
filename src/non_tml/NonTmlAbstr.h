@@ -6,7 +6,7 @@
 namespace json_parser {
 
 // NonTerminalAbstract
-class NonTmlAbstr {
+class NonTmlAbstr { 
 public:
     NonTmlAbstr(const NonTml_t nt_) : nt(nt_) {}
 

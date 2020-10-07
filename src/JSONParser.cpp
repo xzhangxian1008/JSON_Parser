@@ -1,15 +1,14 @@
 #include "JSONParser.h"
 #include "src/non_tml/NonTml.h"
 
-// TODO don't forget object_stk and array_stk when pop NonTmls!
 // NOTICE code push operation firstly, then it's pop's turn
 
 namespace json_parser {
 
 JSONParser::JSONParser(const std::string &parse_target_, bool str_or_file_) 
     : parse_target(parse_target_), str_or_file(str_or_file_), pt_length(parse_target.size()) {
-    non_tml_stack.push(std::unique_ptr<EndNonTml>());
-    non_tml_stack.push(std::unique_ptr<OBJECTNonTml>());
+    non_tml_stack.push(std::unique_ptr<EndNonTml>(new EndNonTml()));
+    non_tml_stack.push(std::unique_ptr<OBJECTNonTml>(new OBJECTNonTml()));
 }
 
 bool JSONParser::semantic_analysis() {
@@ -31,13 +30,24 @@ bool JSONParser::semantic_analysis() {
                 return false;
             }
 
+            // if (tnt->get_token_t() == Token_t::STRING) {
+            //     TkData tkd;
+            //     token_deque.front()->get_token_data(tkd);
+            //     tmp_str = tkd.str;
+            // } 
+
             token_deque.pop_front();
             non_tml_stack.pop();
             continue;
         }
 
-        do_production();
+        bool result = do_production();
+        if (!result) {
+            return false;
+        }
     }
+
+    return true;
 }
 
 /**
@@ -167,6 +177,13 @@ bool JSONParser::do_PAIR() {
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new VALUENonTml));
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new COLONNonTml));
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new TokenNonTml(Token_t::STRING)));
+    if (token_deque.front()->get_token_type() == Token_t::STRING) {
+        TkData tkd;
+        token_deque.front()->get_token_data(tkd);
+        tmp_str = tkd.str;
+    } else {
+        return false;
+    }
     return true;
 }
 
@@ -233,8 +250,14 @@ bool JSONParser::do_ELEMENTS_() {
 
 bool JSONParser::do_VALUE() {
     bool sel = sel_stk.top();
-    OBJECTNonTml *object = object_stk.top();
-    ARRAYNonTml *array = array_stk.top();
+    OBJECTNonTml *object;
+    ARRAYNonTml *array;
+    if (sel) {
+        object = object_stk.top();
+    } else {
+        array = array_stk.top();
+    }
+
     TokenAbstract *tka = token_deque.front().get();
     Token_t tk = tka->get_token_type();
     TkData data;
@@ -245,19 +268,31 @@ bool JSONParser::do_VALUE() {
     switch (tk) {
         case Token_t::STRING:
             if (!tka->get_token_data(data)) { return false; }
-            if (sel) { object->put(tmp_str, new StringValue(data.str)); } 
+            if (sel) {
+                new NumberValue(123);
+                object->put(tmp_str, new StringValue(data.str));
+                // ValueAbstract *p = new StringValue(std::string("123"));
+                // const ValueAbstract *value_abstr = object->get(std::string("name"));
+                // const StringValue *string_value = dynamic_cast<const StringValue*>(p);
+                // std::string value = string_value->get_value();
+                // std::cout << value << std::endl;
+            }
             else { array->push(new StringValue(data.str)); }
+            break;
         case Token_t::NUMBER:
             if (!tka->get_token_data(data)) { return false; }
             if (sel) { object->put(tmp_str, new NumberValue(data.num)); } 
             else { array->push(new NumberValue(data.num)); }
+            break;
         case Token_t::BOOL:
             if (!tka->get_token_data(data)) { return false; }
             if (sel) { object->put(tmp_str, new BoolValue(data.b)); } 
             else { array->push(new BoolValue(data.b)); }
+            break;
         case Token_t::NULL_:
             if (sel) { object->put(tmp_str, new NullValue()); }
             else { array->push(new NullValue()); }
+            break;
         case Token_t::LEFT_BRACE:
             if (sel) {
                 OBJECTNonTml *obj = new OBJECTNonTml();
@@ -269,6 +304,7 @@ bool JSONParser::do_VALUE() {
                 array->push(new ArrayValue(ary));
             }
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new OBJECTNonTml));
+            break;
         case Token_t::LEFT_SB:
             if (sel) {
                 OBJECTNonTml *obj = new OBJECTNonTml();
@@ -280,6 +316,7 @@ bool JSONParser::do_VALUE() {
                 array->push(new ArrayValue(ary));
             }
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ARRAYNonTml));
+            break;
         default:
             return false;
     }
@@ -391,7 +428,6 @@ bool JSONParser::parse() {
         if (!parse_string() || !semantic_analysis()) {
             return false;
         }
-
         return true;
     }
 

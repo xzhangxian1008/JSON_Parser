@@ -27,3 +27,27 @@ invalid lexical:
 {\"a\" : tru}
 {\"a\" : fa}
 {\"a\" ' : \"c\"}
+
+json_parser_test:
+{
+    "name" : "xzx"
+}
+
+{\"name\" : \"xzx\"}
+
+{
+    "name" : "xzx",
+    "age" : 23,
+    "null" : null,
+    "true" : true,
+    "false" : false
+}
+
+{\"name\" : \"xzx\",\"age\" : 23,\"null\" : null,\"true\" : true,\"false\" : false}
+
+{
+    "name" : "xzx",
+    "list" : [123, "str", true, false, null]
+}
+
+{\"name\" : \"xzx\",\"list\" : [123, \"str\", true, false, null]}

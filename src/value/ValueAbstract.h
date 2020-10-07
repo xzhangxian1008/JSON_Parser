@@ -8,32 +8,32 @@ namespace json_parser {
 class OBJECTNonTml;
 class ARRAYNonTml;
 
+/**
+ * a strange bug:
+ *   At the beginning, I put the std::string in the union Values to store string.
+ *   There is no problem when cout string in union's constructor, but it will come across
+ *   error when I cout the value.str int ValueAbstract's constructor where initialize
+ *   the union.
+ */
 union Values {
-    std::string str;
+    // std::string str // puzzling problem
     long num;
     bool b;
     OBJECTNonTml *object;
     ARRAYNonTml *array;
-    Values() { object = nullptr; array = nullptr; }
-    Values(const std::string &s) : str(s) { object = nullptr; array = nullptr; }
-    Values(const long num_) : num(num_) { object = nullptr; array = nullptr; }
-    Values(const bool b_) : b(b_)  { object = nullptr; array = nullptr; }
-    Values(OBJECTNonTml *const object_) : object(object_) { array = nullptr; }
-    Values(ARRAYNonTml *const array_) : array(array_) { object = nullptr; }
-    ~Values() {}
 };
 
 class ValueAbstract {
 public:
-    ValueAbstract(const std::string &str) : value(str), vt(Value_t::STRING) {}
+    ValueAbstract(const std::string &str_) : str(str_), vt(Value_t::STRING) {}
 
-    ValueAbstract(const long num_) : value(num_), vt(Value_t::NUMBER) {}
+    ValueAbstract(const long num_) : vt(Value_t::NUMBER) { value.num = num_; }
 
-    ValueAbstract(const bool b_) : value(b_), vt(Value_t::BOOL) {}
+    ValueAbstract(const bool b_) : vt(Value_t::BOOL) { value.b = b_; }
 
-    ValueAbstract(OBJECTNonTml *const object) : value(object), vt(Value_t::OBJECT) {}
+    ValueAbstract(OBJECTNonTml *const object) : vt(Value_t::OBJECT) { value.object = object; }
 
-    ValueAbstract(ARRAYNonTml *const array) : value(array), vt(Value_t::ARRAY) {}
+    ValueAbstract(ARRAYNonTml *const array) : vt(Value_t::ARRAY) { value.array = array; }
 
     ValueAbstract() : value(), vt(Value_t::NULL_) {}
     
@@ -41,10 +41,11 @@ public:
 
     const Value_t get_value_t() const { return vt; }
 protected:
-    const Values& get_value_() const { return value; }
+    const Values* get_value_() const { return &value; }
+    const std::string& get_str() const { return str; }
 private:
     Values value;
-
+    std::string str;
     Value_t vt;
 };
 

@@ -10,7 +10,7 @@ public:
     StringValue(const std::string &str) : ValueAbstract(str) {}
 
     std::string get_value() const {
-        return get_value_().str;
+        return get_str();
     }
 };
 
@@ -19,7 +19,7 @@ public:
     NumberValue(const long num) : ValueAbstract(num) {}
 
     long get_value() const {
-        return get_value_().num;
+        return get_value_()->num;
     }
 };
 
@@ -28,7 +28,7 @@ public:
     BoolValue(const bool b) : ValueAbstract(b) {}
 
     bool get_value() const {
-        return get_value_().b;
+        return get_value_()->b;
     }
 };
 
@@ -42,7 +42,7 @@ public:
     ObjectValue(OBJECTNonTml *const object) : ValueAbstract(object) {}
 
     const OBJECTNonTml* get_value() const {
-        return get_value_().object;
+        return get_value_()->object;
     }
 };
 
@@ -51,7 +51,7 @@ public:
     ArrayValue(ARRAYNonTml *const array) : ValueAbstract(array) {}
 
     const ARRAYNonTml* get_value() const {
-        return get_value_().array;
+        return get_value_()->array;
     }
 };
 

@@ -48,12 +48,16 @@ public:
         array.push_back(std::unique_ptr<ValueAbstract>(value));
     }
 
-    const ValueAbstract* operator[](std::size_t i) const {
+    const ValueAbstract* operator[](const std::size_t i) const {
         return array[i].get();
     }
 
-    ValueAbstract* operator[](std::size_t i) {
+    ValueAbstract* operator[](const std::size_t i) {
         return array[i].get();
+    }
+
+    std::size_t size() const {
+        return array.size();
     }
 
 private:
