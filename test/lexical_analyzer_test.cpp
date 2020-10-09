@@ -28,7 +28,7 @@ private:
     std::deque<std::unique_ptr<TokenAbstract>> &token_deque;
 };
 
-TEST(LexicalAnalyzer, DISABLED_valid) {
+TEST(LexicalAnalyzer, valid) {
     std::string json1("{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : {\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", { \"book\" : \"cpp\" }]}");
     LexicalAnalyzerTest jpt1(json1, true);
     ASSERT_EQ(true, jpt1.parse());
@@ -91,7 +91,7 @@ TEST(LexicalAnalyzer, DISABLED_valid) {
     EXPECT_EQ(Token_t::END, token_deque[47]->get_token_type());
 }
 
-TEST(LexicalAnalyzer, DISABLED_invalid) {
+TEST(LexicalAnalyzer, invalid) {
     {
         std::string json("{asd : asd}");
         LexicalAnalyzerTest jpt(json, true);

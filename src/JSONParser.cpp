@@ -41,6 +41,8 @@ bool JSONParser::semantic_analysis() {
         }
     }
 
+
+
     return true;
 }
 
@@ -274,24 +276,24 @@ bool JSONParser::do_VALUE() {
 
     // std::cout << "do_VALUE " << tktype_2_str(tk) << std::endl;
 
-    OBJECTNonTml *obj = new OBJECTNonTml();
-    ARRAYNonTml *ary = new ARRAYNonTml();
+    OBJECTNonTml *obj;
+    ARRAYNonTml *ary;
     
     switch (tk) {
         case Token_t::STRING:
-            if (!tka->get_token_data(data)) { print("do_VALUE false 1"); return false; }
+            if (!tka->get_token_data(data)) { return false; }
             if (sel) { object->put(tmp_str, new StringValue(data.str)); }
             else { array->push(new StringValue(data.str)); }
             token_deque.pop_front();
             break;
         case Token_t::NUMBER:
-            if (!tka->get_token_data(data)) { print("do_VALUE false 2"); return false; }
+            if (!tka->get_token_data(data)) { return false; }
             if (sel) { object->put(tmp_str, new NumberValue(data.num)); } 
             else { array->push(new NumberValue(data.num)); }
             token_deque.pop_front();
             break;
         case Token_t::BOOL:
-            if (!tka->get_token_data(data)) { print("do_VALUE false 3"); return false; }
+            if (!tka->get_token_data(data)) { return false; }
             if (sel) { object->put(tmp_str, new BoolValue(data.b)); } 
             else { array->push(new BoolValue(data.b)); }
             token_deque.pop_front();
@@ -302,12 +304,14 @@ bool JSONParser::do_VALUE() {
             token_deque.pop_front();
             break;
         case Token_t::LEFT_BRACE:
+            obj = new OBJECTNonTml;
             object_stk.push(obj);
             if (sel) { object->put(tmp_str, new ObjectValue(obj)); }
             else { array->push(new ObjectValue(obj)); }
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new OBJECTNonTml));
             break;
         case Token_t::LEFT_SB:
+            ary = new ARRAYNonTml;
             array_stk.push(ary);
             if (sel) { object->put(tmp_str, new ArrayValue(ary)); }
             else { array->push(new ArrayValue(ary)); }

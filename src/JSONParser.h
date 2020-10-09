@@ -32,12 +32,14 @@ public:
 
     ~JSONParser() {
         while (op_dq.size()) {
+            // std::cout << "delete obj" << std::endl;
             OBJECTNonTml *obj = op_dq.front();
             delete obj;
             op_dq.pop_front();
         }
 
         while (ap_dq.size()) {
+            // std::cout << "delete ary" << std::endl;
             ARRAYNonTml *ary = ap_dq.front();
             delete ary;
             ap_dq.pop_front();
@@ -69,25 +71,6 @@ private:
     bool search_num(size_t &index, long &val);
 
     bool do_production();
-
-    bool do_START();
-    bool do_OBJECT();
-    bool do_OBJECT_();
-    bool do_MEMBERS();
-    bool do_MEMBERS_();
-    bool do_PAIR();
-    bool do_ARRAY();
-    bool do_ARRAY_();
-    bool do_ELEMENTS();
-    bool do_ELEMENTS_();
-    bool do_VALUE();
-    bool do_COMMA();
-    bool do_COLON();
-    bool do_L_SB();
-    bool do_R_SB();
-    bool do_L_BR();
-    bool do_R_BR();
-    bool do_END();
 
     // store the parse target. json string or filename. It depends on str_or_file
     std::string parse_target;
@@ -136,6 +119,26 @@ private:
 
     // store pair's key for later use
     std::string tmp_str;
+
+    bool do_START();
+    bool do_OBJECT();
+    bool do_OBJECT_();
+    bool do_MEMBERS();
+    bool do_MEMBERS_();
+    bool do_PAIR();
+    bool do_ARRAY();
+    bool do_ARRAY_();
+    bool do_ELEMENTS();
+    bool do_ELEMENTS_();
+    bool do_VALUE();
+    bool do_COMMA();
+    bool do_COLON();
+    bool do_L_SB();
+    bool do_R_SB();
+    bool do_L_BR();
+    bool do_R_BR();
+    bool do_END();
+    
 };
 
 /**

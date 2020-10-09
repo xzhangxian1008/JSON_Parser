@@ -42,7 +42,7 @@ public:
     const Value_t get_value_t() const { return vt; }
 protected:
     const Values* get_value_() const { return &value; }
-    const std::string& get_str() const { return str; }
+    const std::string get_str() const { return str; }
 private:
     Values value;
     std::string str;
