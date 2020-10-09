@@ -3,11 +3,6 @@
 
 namespace json_parser {
 
-template<typename T>
-inline void print(const T &t) {
-    std::cout << t << std::endl;
-}
-
 class LexicalAnalyzerTest : public JSONParser {
 public:
     LexicalAnalyzerTest(const std::string &parse_target_, bool str_or_file_) 
@@ -27,11 +22,13 @@ public:
         }
         return true;
     }
+
+    void print_all_tokens() { print_all_tokens_(); }
 private:
     std::deque<std::unique_ptr<TokenAbstract>> &token_deque;
 };
 
-TEST(LexicalAnalyzer, valid) {
+TEST(LexicalAnalyzer, DISABLED_valid) {
     std::string json1("{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : {\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", { \"book\" : \"cpp\" }]}");
     LexicalAnalyzerTest jpt1(json1, true);
     ASSERT_EQ(true, jpt1.parse());
@@ -94,7 +91,7 @@ TEST(LexicalAnalyzer, valid) {
     EXPECT_EQ(Token_t::END, token_deque[47]->get_token_type());
 }
 
-TEST(LexicalAnalyzer, invalid) {
+TEST(LexicalAnalyzer, DISABLED_invalid) {
     {
         std::string json("{asd : asd}");
         LexicalAnalyzerTest jpt(json, true);

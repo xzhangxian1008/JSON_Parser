@@ -1,3 +1,4 @@
+//==-----------------------------------------------------==//
 valid lexical:
 {
     "name" : "xzx",
@@ -14,11 +15,10 @@ valid lexical:
             "book" : "cpp" 
         } ]
 }
+{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : {\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", { \"book\" : \"cpp\" }]}
 
-{\"name\" : \"xzx\",\"bool\" : true,\"null\" : null,\"num\" : 123,\"obj\" : 
-{\"bool\" : false,\"num\" : -123},\"list\" : [true, null, 1, \"str\", 
-{ \"book\" : \"cpp\" }]}
 
+//==-----------------------------------------------------==//
 invalid lexical:
 {asd : asd}
 {\"asd\" : 123b1}
@@ -28,12 +28,14 @@ invalid lexical:
 {\"a\" : fa}
 {\"a\" ' : \"c\"}
 
+
+//==-----------------------------------------------------==//
 json_parser_test:
 {
     "name" : "xzx"
 }
-
 {\"name\" : \"xzx\"}
+
 
 {
     "name" : "xzx",
@@ -42,12 +44,29 @@ json_parser_test:
     "true" : true,
     "false" : false
 }
-
 {\"name\" : \"xzx\",\"age\" : 23,\"null\" : null,\"true\" : true,\"false\" : false}
+
 
 {
     "name" : "xzx",
     "list" : [123, "str", true, false, null]
 }
-
 {\"name\" : \"xzx\",\"list\" : [123, \"str\", true, false, null]}
+
+
+{
+    "obj" : {
+        "name" : "xzx",
+        "list" : [123, null],
+        "obj2" : {
+            "aaa" : "bbb",
+            "null" : null
+        }
+    },
+    "list" : [
+        false,
+        {"books":"c++"},
+        [321, "str"]
+    ]
+}
+{\"obj\" : {\"name\" : \"xzx\",\"list\" : [123, null],\"obj2\" : {\"aaa\" : \"bbb\",\"null\" : null}},\"list\" : [false,{\"books\":\"c++\"},[321, \"str\"]]}

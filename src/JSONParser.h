@@ -49,9 +49,12 @@ public:
     }
 
 protected:
+    //==-------------------------------------------------------==//
     // NOTICE function only for test
     std::deque<std::unique_ptr<TokenAbstract>>& get_token_deque() { return token_deque; }
     bool get_str_or_file() { return str_or_file; }
+    void print_all_tokens_();
+    //==-------------------------------------------------------==//
 
     bool parse_file();
     bool parse_string();
@@ -134,6 +137,16 @@ private:
     // store pair's key for later use
     std::string tmp_str;
 };
+
+/**
+ * for printing easily and controllable
+ */
+template<typename T>
+inline void print(T t, int flag = 0) {
+    if (flag == 0) {
+        std::cout << t << std::endl;
+    }
+}
 
 } // namespace json_parser
 

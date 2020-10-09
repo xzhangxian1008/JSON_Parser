@@ -3,7 +3,7 @@ FLAGS = -std=c++11 -g -c
 LINK_LIB = -lgtest
 ALL_HEADERS = src/JSONParser.h src/non_tml/NonTml.h src/non_tml/NonTmlAbstr.h src/token/Token.h \
 src/token/TokenAbstract.h src/value/Value.h src/value/ValueAbstract.h src/types.h
-TARGET = la_test
+TARGET = la_test json_test
 INCLUDE_PATH = -I /home/xzx/codes/JSON_Parser
 
 # need automatical dependency generation

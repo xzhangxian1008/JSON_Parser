@@ -30,12 +30,6 @@ bool JSONParser::semantic_analysis() {
                 return false;
             }
 
-            // if (tnt->get_token_t() == Token_t::STRING) {
-            //     TkData tkd;
-            //     token_deque.front()->get_token_data(tkd);
-            //     tmp_str = tkd.str;
-            // } 
-
             token_deque.pop_front();
             non_tml_stack.pop();
             continue;
@@ -107,6 +101,7 @@ bool JSONParser::do_START() {
 bool JSONParser::do_OBJECT() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::LEFT_BRACE) {
+        print("do_OBJECT false");
         return false;
     }
 
@@ -124,7 +119,6 @@ bool JSONParser::do_OBJECT_() {
             non_tml_stack.pop();
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new R_BRNonTml));
             if (object_stk.size() == 0) { object_stk.push(new OBJECTNonTml); }
-            // object_lct_stk.push(non_tml_stack.size());
             sel_stk.push(true);
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new MEMBERSNonTml));
             return true;
@@ -134,12 +128,14 @@ bool JSONParser::do_OBJECT_() {
             return true;
     }
 
+    print("do_OBJECT_ false");
     return false;
 }
 
 bool JSONParser::do_MEMBERS() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::STRING) {
+        std::cout << "do_MEMBERS false" << std::endl;
         return false;
     }
 
@@ -163,6 +159,7 @@ bool JSONParser::do_MEMBERS_() {
             return true;
     }
 
+    print("do_MEMBERS_ false");
     return false;
 }
 
@@ -170,6 +167,7 @@ bool JSONParser::do_PAIR() {
     Token_t tk = token_deque.front()->get_token_type();
 
     if (tk != Token_t::STRING) {
+        print("do_PAIR false 1");
         return false;
     }
 
@@ -182,6 +180,7 @@ bool JSONParser::do_PAIR() {
         token_deque.front()->get_token_data(tkd);
         tmp_str = tkd.str;
     } else {
+        print("do_PAIR false 2");
         return false;
     }
     return true;
@@ -191,6 +190,8 @@ bool JSONParser::do_ARRAY() {
     Token_t tk = token_deque.front()->get_token_type();
 
     if (tk != Token_t::LEFT_SB) {
+        print("do_ARRAY false");
+        print(tktype_2_str(tk));
         return false;
     }
 
@@ -207,7 +208,6 @@ bool JSONParser::do_ARRAY_() {
         tk == Token_t::NULL_ || tk == Token_t::LEFT_SB || tk == Token_t::LEFT_BRACE) {
         non_tml_stack.pop();
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new R_SBNonTml));
-        // array_lct_stk.push(array_stk.size());
         sel_stk.push(false);
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ELEMENTSNonTml));
         return true;
@@ -217,6 +217,7 @@ bool JSONParser::do_ARRAY_() {
         return true;
     }
 
+    print("do_ARRAY_ false");
     return false;
 }
 
@@ -224,27 +225,33 @@ bool JSONParser::do_ELEMENTS() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk == Token_t::STRING || tk == Token_t::NUMBER || tk == Token_t::BOOL ||
         tk == Token_t::NULL_ || tk == Token_t::LEFT_SB || tk == Token_t::LEFT_BRACE) {
+        // print("do_ELEMENTS");
         non_tml_stack.pop();
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ELEMENTS_NonTml));
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new VALUENonTml));
         return true;
     }
 
+    print("do_ELEMENTS false");
     return false;
 }
 
 bool JSONParser::do_ELEMENTS_() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk == Token_t::RIGHT_SB) {
+        // print("clear ELEMENTS_");
         non_tml_stack.pop();
         return true;
     } else if (tk == Token_t::COMMA) {
+        // print("do_ELEMENTS_");
         non_tml_stack.pop();
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ELEMENTSNonTml));
         non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new COMMANonTml));
         return true;
     }
 
+    // print(tktype_2_str(tk));
+    print("do_ELEMENTS_ false");
     return false;
 }
 
@@ -264,73 +271,64 @@ bool JSONParser::do_VALUE() {
 
     // pop VALUE non-terminal
     non_tml_stack.pop();
+
+    // std::cout << "do_VALUE " << tktype_2_str(tk) << std::endl;
+
+    OBJECTNonTml *obj = new OBJECTNonTml();
+    ARRAYNonTml *ary = new ARRAYNonTml();
     
     switch (tk) {
         case Token_t::STRING:
-            if (!tka->get_token_data(data)) { return false; }
-            if (sel) {
-                new NumberValue(123);
-                object->put(tmp_str, new StringValue(data.str));
-                // ValueAbstract *p = new StringValue(std::string("123"));
-                // const ValueAbstract *value_abstr = object->get(std::string("name"));
-                // const StringValue *string_value = dynamic_cast<const StringValue*>(p);
-                // std::string value = string_value->get_value();
-                // std::cout << value << std::endl;
-            }
+            if (!tka->get_token_data(data)) { print("do_VALUE false 1"); return false; }
+            if (sel) { object->put(tmp_str, new StringValue(data.str)); }
             else { array->push(new StringValue(data.str)); }
+            token_deque.pop_front();
             break;
         case Token_t::NUMBER:
-            if (!tka->get_token_data(data)) { return false; }
+            if (!tka->get_token_data(data)) { print("do_VALUE false 2"); return false; }
             if (sel) { object->put(tmp_str, new NumberValue(data.num)); } 
             else { array->push(new NumberValue(data.num)); }
+            token_deque.pop_front();
             break;
         case Token_t::BOOL:
-            if (!tka->get_token_data(data)) { return false; }
+            if (!tka->get_token_data(data)) { print("do_VALUE false 3"); return false; }
             if (sel) { object->put(tmp_str, new BoolValue(data.b)); } 
             else { array->push(new BoolValue(data.b)); }
+            token_deque.pop_front();
             break;
         case Token_t::NULL_:
             if (sel) { object->put(tmp_str, new NullValue()); }
             else { array->push(new NullValue()); }
+            token_deque.pop_front();
             break;
         case Token_t::LEFT_BRACE:
-            if (sel) {
-                OBJECTNonTml *obj = new OBJECTNonTml();
-                object_stk.push(obj);
-                object->put(tmp_str, new ObjectValue(obj));
-            } else {
-                ARRAYNonTml *ary = new ARRAYNonTml();
-                array_stk.push(ary);
-                array->push(new ArrayValue(ary));
-            }
+            object_stk.push(obj);
+            if (sel) { object->put(tmp_str, new ObjectValue(obj)); }
+            else { array->push(new ObjectValue(obj)); }
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new OBJECTNonTml));
             break;
         case Token_t::LEFT_SB:
-            if (sel) {
-                OBJECTNonTml *obj = new OBJECTNonTml();
-                object_stk.push(obj);
-                object->put(tmp_str, new ObjectValue(obj));
-            } else {
-                ARRAYNonTml *ary = new ARRAYNonTml();
-                array_stk.push(ary);
-                array->push(new ArrayValue(ary));
-            }
+            array_stk.push(ary);
+            if (sel) { object->put(tmp_str, new ArrayValue(ary)); }
+            else { array->push(new ArrayValue(ary)); }
             non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new ARRAYNonTml));
             break;
         default:
+            print("do_VALUE false 4");
             return false;
     }
 
-    token_deque.pop_front();
     return true;
 }
 
 bool JSONParser::do_COMMA() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::COMMA) {
+        print("do_COMMA false");
         return false;
     }
 
+    // print("pop COMMA");
     non_tml_stack.pop();
     non_tml_stack.push(std::unique_ptr<NonTmlAbstr>(new TokenNonTml(Token_t::COMMA)));
     return true;
@@ -339,6 +337,7 @@ bool JSONParser::do_COMMA() {
 bool JSONParser::do_COLON() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::COLON) {
+        print("do_COLON false");
         return false;
     }
 
@@ -350,6 +349,7 @@ bool JSONParser::do_COLON() {
 bool JSONParser::do_L_SB() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::LEFT_SB) {
+        print("do_L_SB false");
         return false;
     }
 
@@ -361,6 +361,7 @@ bool JSONParser::do_L_SB() {
 bool JSONParser::do_R_SB() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::RIGHT_SB) {
+        print("do_R_SB false");
         return false;
     }
 
@@ -382,6 +383,7 @@ bool JSONParser::do_R_SB() {
 bool JSONParser::do_L_BR() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::LEFT_BRACE) {
+        print("do_L_BR false");
         return false;
     }
 
@@ -393,6 +395,7 @@ bool JSONParser::do_L_BR() {
 bool JSONParser::do_R_BR() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::RIGHT_BRACE) {
+        print("do_R_BR false");
         return false;
     }
 
@@ -415,6 +418,7 @@ bool JSONParser::do_R_BR() {
 bool JSONParser::do_END() {
     Token_t tk = token_deque.front()->get_token_type();
     if (tk != Token_t::END) {
+        print("do_END false");
         return false;
     }
 
@@ -628,6 +632,13 @@ bool JSONParser::search_num(size_t &index, long &val) {
 bool JSONParser::parse_file() {
     
     return true;
+}
+
+void JSONParser::print_all_tokens_() {
+    for (int i = 0; i < token_deque.size(); ++i) {
+        auto token = token_deque[i].get();
+        print(tktype_2_str(token->get_token_type()));
+    }
 }
 
 } // namespace json_parser
